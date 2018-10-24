@@ -4,15 +4,11 @@
 
 This docker image runs a [inotify](https://github.com/rvoicilas/inotify-tools/wiki) service based on [Alpine Linux](https://hub.docker.com/_/alpine/).
 
-[![](https://images.microbadger.com/badges/image/pstauffer/inotify.svg)](https://microbadger.com/images/pstauffer/inotify)
-
 ## Usage
-
-If you like to use this image, please use a specific version tag like `v1.0.0` or the branches `latest`, `stable`. The other branches are only temporary and will be deleted after the merge into the other branches.
 
 * Link docker socket into container `-v /var/run/docker.sock:/var/run/docker.sock:ro`
 * Link one or more directories, which you would like to monitor with inotifywait into the docker container. As example: `-v /var/lib/docker/data/bind/config:/config`.
-* Set container variable `CONTAINER=<id|name>`, which will be notified.
+* Set docker endpoint `API_ENDPOINT=<container|image|network|etc>` and name 'ENDPOINT_NAME' which will receive the `DOCKER_COMMAND=<restart|kill|create|etc> with parameters `DOCKER_PARAMS=<all|name=...|etc>`. DOCKER_PARAMS does not require question mark it will be added if required.
 * Define the volume variable to define the container internal paths to the monitored directories.
 
 
