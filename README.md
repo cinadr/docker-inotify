@@ -8,7 +8,7 @@ This docker image runs a [inotify](https://github.com/rvoicilas/inotify-tools/wi
 
 * Link docker socket into container `-v /var/run/docker.sock:/var/run/docker.sock:ro`
 * Link one or more directories, which you would like to monitor with inotifywait into the docker container. As example: `-v /var/lib/docker/data/bind/config:/config`.
-* Set docker endpoint `API_ENDPOINT=<container|image|network|etc>` and name 'ENDPOINT_NAME' which will receive the `DOCKER_COMMAND=<restart|kill|create|etc> with parameters `DOCKER_PARAMS=<all|name=...|etc>`. DOCKER_PARAMS does not require question mark it will be added if required.
+* Set docker endpoint `API_ENDPOINT=<container|image|network|etc>` and name 'ENDPOINT_NAME' which will receive the `DOCKER_COMMAND=<restart|kill|create|etc>` with parameters `DOCKER_PARAMS=<all|name=...|etc>`. DOCKER_PARAMS does not require question mark it will be added if required.
 * Define the volume variable to define the container internal paths to the monitored directories.
 
 
