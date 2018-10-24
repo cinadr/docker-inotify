@@ -3,14 +3,14 @@
 # Script options (exit script on command fail).
 #
 set -e
-API_VERSION_DEFAULT='1.24'
-API_ENDPOINT_DEFAULT='container'
-DOCKER_COMMAND_DEFAULT='restart'
-DOCKER_PARAMS_DEFAULT=
-CURL_OPTIONS_DEFAULT='-s -X POST'
-INOTIFY_EVENTS_DEFAULT="create,delete,modify,move"
-INOTIFY_OPTIONS_DEFAULT='--monitor'
-SETTLE_DOWN_DEFAULT='600'
+API_VERSION_DEFAULT='1.24'                          #use Docker API version
+API_ENDPOINT_DEFAULT='container'                    #manipulate a container
+DOCKER_COMMAND_DEFAULT='restart'                    #restart container
+DOCKER_PARAMS_DEFAULT=                              #no params for restart
+CURL_OPTIONS_DEFAULT='-s -X POST'                   #prevent progress bar
+INOTIFY_EVENTS_DEFAULT="create,delete,modify,move"  #monitor all events
+INOTIFY_OPTIONS_DEFAULT='--monitor -r'              #recursive mode
+SETTLE_DOWN_DEFAULT='600'                           #prevent quick multiple iterations
 
 #
 # Display settings on standard out.
@@ -49,5 +49,6 @@ inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTIONS} "${VOLUMES}" | stdbuf -oL un
 	    fi
         echo "$FILES"
         echo "Notification received, performing Docker operation <${DOCKER_COMMAND}> on ${ENDPOINT_NAME} <${API_ENDPOINT}>."
-        curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${DOCKER_API}/containers/${CONTAINER}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr
+        curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr
     done
+    
