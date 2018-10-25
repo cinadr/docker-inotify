@@ -33,7 +33,7 @@ echo
 #
 # Prepend docker command parameters with question mark.
 #
-if [[ $DOCKER_PARAMS]]; then DOCKER_PARAMS="?${DOCKER_PARAMS}"
+if [[ $DOCKER_PARAMS]]; then DOCKER_PARAMS="?${DOCKER_PARAMS}"; fi
 
 #
 # Inotify part.
@@ -44,9 +44,9 @@ inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTIONS} "${VOLUMES}" | stdbuf -oL un
     do
     	sleep "$SETTLE_DOWN"
         if [ `find "$FILES" -type f -newermt "$SETTLE_DOWN seconds ago" -print -quit` ]; then
-		    echo "Modified: $FILES"
-		    continue
-	    fi
+	    echo "Modified: $FILES"
+	    continue
+	fi
         echo "$FILES"
         echo "Notification received, performing Docker operation <${DOCKER_COMMAND}> on ${ENDPOINT_NAME} <${API_ENDPOINT}>."
         curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr
