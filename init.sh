@@ -1,8 +1,12 @@
 #!/bin/sh
+
+trap "cleanup 0" INT TERM EXIT
+
 #
 # Script options (exit script on command fail).
 #
-set -e
+set -euo pipefail
+
 API_VERSION_DEFAULT='1.24'                          #use Docker API version
 API_ENDPOINT_DEFAULT='containers'                    #manipulate a container
 DOCKER_COMMAND_DEFAULT='restart'                    #restart container
@@ -37,10 +41,9 @@ if [[ $DOCKER_PARAMS]]; then DOCKER_PARAMS="?${DOCKER_PARAMS}"; fi
 # Inotify part.
 #
 echo "[Starting inotifywait...]"
-trap cleanup SIGHUP SIGINT SIGTERM SIGQUIT
 inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTIONS} "${VOLUMES}" --format '%w %e %T' --timefmt '%H%M%S' | stdbuf -oL uniq | \
   while read -r FILES;
-    do
+    do      
       echo "$FILES"
       echo "Notification received, performing ${DOCKER_COMMAND} operation on ${API_ENDPOINT} ${ENDPOINT_NAME}." 
       curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr	
@@ -49,8 +52,7 @@ inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTIONS} "${VOLUMES}" --format '%w %e
 #
 # Quick exit on Docker stop
 #
-function cleanup {
-  trap - SIGHUP SIGINT SIGTERM SIGQUIT
+function cleanup {  
   echo -n "Cleaning up... "    
   kill -- -$$
   echo "Done."
