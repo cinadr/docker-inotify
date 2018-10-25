@@ -10,7 +10,7 @@ DOCKER_PARAMS_DEFAULT=                              #no params for restart
 CURL_OPTIONS_DEFAULT='-s -X POST'                   #prevent progress bar
 INOTIFY_EVENTS_DEFAULT="create,delete,modify,move"  #monitor all events
 INOTIFY_OPTIONS_DEFAULT='--monitor -r'              #recursive mode
-SETTLE_DOWN_DEFAULT='600'                           #prevent quick multiple iterations
+#SETTLE_DOWN_DEFAULT='600'                           #prevent quick multiple iterations
 
 #
 # Display settings on standard out.
@@ -42,13 +42,13 @@ echo "[Starting inotifywait...]"
 inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTIONS} "${VOLUMES}" | stdbuf -oL uniq | \
     while read -r FILES;
     do
-    	sleep "$SETTLE_DOWN"
-        if [ `find "$FILES" -type f -newermt "$SETTLE_DOWN seconds ago" -print -quit` ]; then
-	    echo "Modified: $FILES"
-	    continue
-	fi
+    	#sleep "$SETTLE_DOWN"
+        #if [ `find "$FILES" -type f -newermt "$SETTLE_DOWN seconds ago" -print -quit` ]; then
+	#    echo "Modified: $FILES"
+	#    continue
+	#fi
         echo "$FILES"
-        echo "Notification received, performing Docker operation <${DOCKER_COMMAND}> on ${ENDPOINT_NAME} <${API_ENDPOINT}>."
+        echo "Notification received, performing ${DOCKER_COMMAND} operation on ${API_ENDPOINT} ${ENDPOINT_NAME}.\ncurl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr"
         curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr
     done
     
