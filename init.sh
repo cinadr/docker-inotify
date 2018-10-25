@@ -37,10 +37,22 @@ if [[ $DOCKER_PARAMS]]; then DOCKER_PARAMS="?${DOCKER_PARAMS}"; fi
 # Inotify part.
 #
 echo "[Starting inotifywait...]"
+trap cleanup SIGHUP SIGINT SIGTERM SIGQUIT
 inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTIONS} "${VOLUMES}" --format '%w %e %T' --timefmt '%H%M%S' | stdbuf -oL uniq | \
-    while read -r FILES;
+  while read -r FILES;
     do
-    	echo "$FILES"
-        echo "Notification received, performing ${DOCKER_COMMAND} operation on ${API_ENDPOINT} ${ENDPOINT_NAME}." 
-        curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr	
+      echo "$FILES"
+      echo "Notification received, performing ${DOCKER_COMMAND} operation on ${API_ENDPOINT} ${ENDPOINT_NAME}." 
+      curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr	
     done  
+    
+#
+# Quick exit on Docker stop
+#
+function cleanup {
+  trap - SIGHUP SIGINT SIGTERM SIGQUIT
+  echo -n "Cleaning up... "    
+  kill -- -$$
+  echo "Done."
+  exit $1
+}
