@@ -22,7 +22,7 @@ echo "  API version:      ${API_VERSION:=${API_DEFAULT}}"
 echo "  API endpoint:     ${API_ENDPOINT:=${API_ENDPOINT_DEFAULT}}"
 echo "  Endpoint name:    ${ENDPOINT_NAME}"
 echo "  Docker command:   ${DOCKER_COMMAND:=${DOCKER_COMMAND_DEFAULT}}"
-echo "  Docker params:    ${DOCKER_PARAMS:=${DOCKER_PARAMS_DEFAULT}}
+echo "  Docker params:    ${DOCKER_PARAMS:=${DOCKER_PARAMS_DEFAULT}}"
 echo "  Volumes:          ${VOLUMES}"
 echo "  Curl Options:     ${CURL_OPTIONS:=${CURL_OPTIONS_DEFAULT}}"
 echo "  Inotify Events:   ${INOTIFY_EVENTS:=${INOTIFY_EVENTS_DEFAULT}}"
