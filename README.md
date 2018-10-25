@@ -17,8 +17,8 @@ This docker image runs a [inotify](https://github.com/rvoicilas/inotify-tools/wi
 ```
 docker run -d --name inotify -v /var/run/docker.sock:/var/run/docker.sock:ro \
 -v /var/lib/docker/data/bind/config:/config \
--e "CONTAINER=bind" -e "VOLUMES=/config" \
-pstauffer/inotify:stable
+-e "ENDPOINT_NAME=<notify_this_container>" -e "VOLUMES=/config" \
+cina/docker-inotify:latest
 ```
 
 
