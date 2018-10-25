@@ -1,5 +1,5 @@
 inotify:
-  image: 'pstauffer/inotify:latest'
+  image: 'cina/inotify:latest'
   container_name: 'inotify'
 
   volumes:
@@ -8,7 +8,7 @@ inotify:
   - '/var/lib/docker/data/bind/data:/data'
 
   environment:
-  - 'CONTAINER=bind'
+  - 'ENDPOINT_NAME=bind'
   - 'VOLUMES=/config /data'
 
   restart: always
