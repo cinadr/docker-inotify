@@ -4,7 +4,7 @@
 #
 set -e
 API_VERSION_DEFAULT='1.24'                          #use Docker API version
-API_ENDPOINT_DEFAULT='container'                    #manipulate a container
+API_ENDPOINT_DEFAULT='containers'                    #manipulate a container
 DOCKER_COMMAND_DEFAULT='restart'                    #restart container
 DOCKER_PARAMS_DEFAULT=                              #no params for restart
 CURL_OPTIONS_DEFAULT='-s -X POST'                   #prevent progress bar
@@ -48,7 +48,7 @@ inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTIONS} "${VOLUMES}" | stdbuf -oL un
 	#    continue
 	#fi
         echo "$FILES"
-        echo "Notification received, performing ${DOCKER_COMMAND} operation on ${API_ENDPOINT} ${ENDPOINT_NAME}.\ncurl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr"
+        echo "Notification received, performing ${DOCKER_COMMAND} operation on ${API_ENDPOINT} ${ENDPOINT_NAME}. \n curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr"
         curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr
     done
     
