@@ -10,7 +10,6 @@ DOCKER_PARAMS_DEFAULT=                              #no params for restart
 CURL_OPTIONS_DEFAULT='-s -X POST'                   #prevent progress bar
 INOTIFY_EVENTS_DEFAULT="create,delete,modify,move"  #monitor all events
 INOTIFY_OPTIONS_DEFAULT='--monitor -r'              #recursive mode
-#SETTLE_DOWN_DEFAULT='600'                           #prevent quick multiple iterations
 
 #
 # Display settings on standard out.
@@ -27,7 +26,6 @@ echo "  Volumes:          ${VOLUMES}"
 echo "  Curl Options:     ${CURL_OPTIONS:=${CURL_OPTIONS_DEFAULT}}"
 echo "  Inotify Events:   ${INOTIFY_EVENTS:=${INOTIFY_EVENTS_DEFAULT}}"
 echo "  Inotify Options:  ${INOTIFY_OPTIONS:=${INOTIFY_OPTIONS_DEFAULT}}"
-echo "  Settle down:      ${SETTLE_DOWN:=${SETTLE_DOWN_DEFAULT}}"
 echo
 
 #
@@ -39,16 +37,15 @@ if [[ $DOCKER_PARAMS]]; then DOCKER_PARAMS="?${DOCKER_PARAMS}"; fi
 # Inotify part.
 #
 echo "[Starting inotifywait...]"
-inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTIONS} "${VOLUMES}" | stdbuf -oL uniq | \
+inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTIONS} "${VOLUMES}" --format '%w %e %T' --timefmt '%H%M%S' | stdbuf -oL uniq | \
     while read -r FILES;
     do
-    	#sleep "$SETTLE_DOWN"
-        #if [ `find "$FILES" -type f -newermt "$SETTLE_DOWN seconds ago" -print -quit` ]; then
-	#    echo "Modified: $FILES"
-	#    continue
-	#fi
-        echo "$FILES"
-        echo "Notification received, performing ${DOCKER_COMMAND} operation on ${API_ENDPOINT} ${ENDPOINT_NAME}. \n curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr"
-        curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr
-    done
-    
+    	current=$(date +'%H%M%S')
+        delta=`expr $current - $tm`
+        if [ $delta -lt 2 -a $delta -gt -2 ] ; then
+	    sleep 1
+            echo "$FILES"
+            echo "Notification received, performing ${DOCKER_COMMAND} operation on ${API_ENDPOINT} ${ENDPOINT_NAME}." 
+            curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr
+	fi
+    done  
