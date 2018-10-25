@@ -7,7 +7,7 @@ MAINTAINER Zimmermann Zsolt
 #
 
 RUN apk --update upgrade && \
-    apk add --update inotify-tools && \
+    apk add --update inotify-tools coreutils && \
     rm -rf /var/cache/apk/*
 
 
