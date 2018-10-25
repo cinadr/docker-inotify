@@ -28,41 +28,27 @@ Check out the docker-compose file in the [git repo](https://raw.githubuserconten
 docker-compse up -d
 ```
 
+### API Options
+* Version: for robustness one must specify an [API version](https://docs.docker.com/engine/api/version-history/). Environment variable: `API_VERSION=1.24`
+* Endpoint: specify the endpoint type which one need to access. [See here](https://docs.docker.com/engine/api/v1.24/) Environment variable: `API_ENDPOINT=container`
+* Endpoint name: name or id of the enpoint (image/container/network/etc). Environment variable: `ENDPOINT_NAME=<container name>`
+* Docker command: specify the command to be executed against the named endpoint. Environment variable: `DOCKER_COMMAND=restart`
+* Docker parameters: parameter list and values of the command. Environment variable: `DOCKER_PARAMS=`
 
 ### Curl Options
-For debug propose it's possible to pass additional curl options into the container. Just set the environment variable `CURL_OPTIONS=-v`.
-
-
-### Signal
-The default signal is `SIGHUP`. This behaviour can be overwritten, if you set the environment variable `SIGNAL=<signal>`.
-
+For debug propose it's possible to pass additional curl options into the container. Just set the environment variable `CURL_OPTIONS=-s -X POST`.
 
 ### Inotify Events
-The default inotify events are `create,delete,modify,move`. This behaviour can be overwritten, if you set the environment variable `INOTIFY_EVENTS=<events>`.
+The default inotify events are `create,delete,modify,move`. This behaviour can be overwritten, if you set the environment variable `INOTIFY_EVENTS=create,delete,modify,move`.
 
 ### Inotify Options
-To define your own inotify options, overwrite the variable `INOTIFY_OPTONS=<your options>`.
+To define your own inotify options, overwrite the variable `INOTIFY_OPTONS=--monitor -r`.
 
+### Settle down
+Timer to settle down quick inotify repeated events. `SETTLE_DOWN=600`
 
 ## Security
 Please be aware that the Docker Socket is mounted inside this Docker Container and with that you can manipulate all containers. So don't expose ports or use this image for external services!
-
-
-## Debugging
-
-### Docker API Requests
-Here are some sample API requests. Just exec the shell and try out the commands. Check out the [Docker API Documentation](https://docs.docker.com/engine/reference/api/docker_remote_api_v1.22/) for more calls.
-```
-# get all containers
-curl --unix-socket /var/run/docker.sock http:/containers/json
-
-# stop a container
-curl -X POST --unix-socket /var/run/docker.sock http:/containers/bind/stop
-
-# send a signal to a container
-curl -X POST --unix-socket /var/run/docker.sock http:/containers/bind/kill?signal=SIGHUP
-```
-
 
 ## License
 This project is licensed under `MIT <http://opensource.org/licenses/MIT>`_.
