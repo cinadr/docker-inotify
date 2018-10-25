@@ -40,12 +40,7 @@ echo "[Starting inotifywait...]"
 inotifywait -e ${INOTIFY_EVENTS} ${INOTIFY_OPTIONS} "${VOLUMES}" --format '%w %e %T' --timefmt '%H%M%S' | stdbuf -oL uniq | \
     while read -r FILES;
     do
-    	current=$(date +'%H%M%S')
-        delta=`expr $current - $tm`
-        if [ $delta -lt 2 -a $delta -gt -2 ] ; then
-	    sleep 1
-            echo "$FILES"
-            echo "Notification received, performing ${DOCKER_COMMAND} operation on ${API_ENDPOINT} ${ENDPOINT_NAME}." 
-            curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr
-	fi
+    	echo "$FILES"
+        echo "Notification received, performing ${DOCKER_COMMAND} operation on ${API_ENDPOINT} ${ENDPOINT_NAME}." 
+        curl ${CURL_OPTIONS} --unix-socket /var/run/docker.sock http://${API_VERSION}/${API_ENDPOINT}/${ENDPOINT_NAME}/${DOCKER_COMMAND}${DOCKER_PARAMS} > /dev/stdout 2> /dev/stderr	
     done  
