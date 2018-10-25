@@ -1,4 +1,4 @@
-FROM pstauffer/curl:latest
+FROM alpine:latest
 
 MAINTAINER Zimmermann Zsolt
 
@@ -7,9 +7,8 @@ MAINTAINER Zimmermann Zsolt
 #
 
 RUN apk --update upgrade && \
-    apk add --update inotify-tools coreutils && \
+    apk add --update curl inotify-tools coreutils tini && \
     rm -rf /var/cache/apk/*
-
 
 #
 # Add named init script.
@@ -30,4 +29,5 @@ WORKDIR /tmp
 # Start named.
 #
 
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/init.sh"]
