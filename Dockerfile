@@ -1,6 +1,6 @@
-FROM pstauffer/curl:v1.0.3
+FROM pstauffer/curl:latest
 
-MAINTAINER pstauffer@confirm.ch
+MAINTAINER Zimmermann Zsolt
 
 #
 # Install all required dependencies.
